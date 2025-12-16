@@ -4,9 +4,13 @@ import com.example.demo.global.apiPayload.ApiResponse;
 import com.example.demo.global.apiPayload.code.BaseErrorCode;
 import com.example.demo.global.apiPayload.code.GeneralErrorCode;
 import com.example.demo.global.apiPayload.exception.GeneralException;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GeneralExceptionAdvice {
@@ -30,5 +34,22 @@ public class GeneralExceptionAdvice {
                                 code,
                                 ex.getMessage()
                         ));
+    }
+
+    // @ValidPage 같은 파라미터 제약이 깨졌을 때 발생하는 ConstraintViolationException을 공통 포맷으로 응답
+    @ExceptionHandler(ConstraintViolationException.class)
+    protected ResponseEntity<ApiResponse<Map<String, String>>> handleConstraintViolationException(
+            ConstraintViolationException ex
+    ) {
+        Map<String, String> errors = ex.getConstraintViolations().stream()
+                .collect(Collectors.toMap(
+                        violation -> violation.getPropertyPath().toString(),
+                        violation -> violation.getMessage()
+                ));
+
+        GeneralErrorCode code = GeneralErrorCode.VALID_FAIL;
+        ApiResponse<Map<String, String>> errorResponse = ApiResponse.onFailure(code, errors);
+
+        return ResponseEntity.status(code.getStatus()).body(errorResponse);
     }
 }
