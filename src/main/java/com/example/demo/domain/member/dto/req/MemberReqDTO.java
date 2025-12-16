@@ -20,4 +20,13 @@ public class MemberReqDTO {
         @NotNull(message = "성별을 선택해주세요.")
         Gender gender
     ) {}
+
+    // 로그인
+    public record LoginDTO(
+            @NotBlank(message = "이메일을 입력해주세요.")
+            String email,
+
+            @NotBlank(message = "비밀번호를 입력해주세요.")
+            String password
+    ) {}
 }

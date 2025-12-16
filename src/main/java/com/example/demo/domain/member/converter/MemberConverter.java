@@ -24,4 +24,12 @@ public class MemberConverter {
                 .createdAt(member.getCreatedAt())
                 .build();
     }
+
+    // Entity -> DTO
+    public static MemberResDTO.LoginDto toLoginDto(Member member, String accessToken) {
+        return MemberResDTO.LoginDto.builder()
+                .memberId(member.getId())
+                .accessToken(accessToken)
+                .build();
+    }
 }
