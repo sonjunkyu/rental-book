@@ -12,4 +12,11 @@ public class RentResDTO {
        LocalDateTime rentedAt,
        LocalDateTime dueAt
     ) {}
+
+    @Builder
+    public record ReturnInfo(
+       Long rentId,
+       String bookName,
+       LocalDateTime returnedAt
+    ) {}
 }

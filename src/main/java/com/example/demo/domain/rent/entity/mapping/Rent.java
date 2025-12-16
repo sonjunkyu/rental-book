@@ -49,4 +49,10 @@ public class Rent {
     // 반납된 시간
     @Column(name = "returned_at", nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime returnedAt;
+
+    // 반납 처리
+    public void returnBook() {
+        this.status = Status.RETURNED;
+        this.returnedAt = LocalDateTime.now();
+    }
 }

@@ -29,4 +29,12 @@ public class RentConverter {
                 .dueAt(rent.getDueAt())
                 .build();
     }
+
+    public static RentResDTO.ReturnInfo toReturnInfo(Rent rent) {
+        return RentResDTO.ReturnInfo.builder()
+                .rentId(rent.getId())
+                .bookName(rent.getBook().getName())
+                .returnedAt(rent.getReturnedAt())
+                .build();
+    }
 }

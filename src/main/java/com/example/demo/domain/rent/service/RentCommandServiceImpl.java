@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class RentCommandServiceImpl implements RentCommandService {
     private final MemberRepository memberRepository;
     private final BookRepository bookRepository;
@@ -32,7 +32,6 @@ public class RentCommandServiceImpl implements RentCommandService {
     private static final int RENT_PERIOD_DAYS = 14; // 대출 기간
 
     @Override
-    @Transactional
     public RentResDTO.RentInfo rent(Long memberId, RentReqDTO.RentCreate dto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
@@ -53,5 +52,25 @@ public class RentCommandServiceImpl implements RentCommandService {
         rentRepository.save(rent);
 
         return RentConverter.toRentInfo(rent);
+    }
+
+    @Override
+    public RentResDTO.ReturnInfo returnBook(Long rentId, Long memberId) {
+        Rent rent = rentRepository.findById(rentId)
+                .orElseThrow(() -> new RentException(RentErrorCode.RENT_NOT_FOUND));
+
+        // 본인 확인
+        if (!rent.getMember().getId().equals(memberId)) {
+            throw new RentException(RentErrorCode.RENT_NOT_AUTHORIZED);
+        }
+
+        // 이미 반납 여부
+        if (rent.getStatus() == Status.RETURNED) {
+            throw new RentException(RentErrorCode.RENT_ALREADY_RETURNED);
+        }
+
+        rent.returnBook();
+
+        return RentConverter.toReturnInfo(rent);
     }
 }
