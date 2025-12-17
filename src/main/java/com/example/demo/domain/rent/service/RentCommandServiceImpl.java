@@ -8,6 +8,9 @@ import com.example.demo.domain.member.entity.Member;
 import com.example.demo.domain.member.exception.MemberException;
 import com.example.demo.domain.member.exception.code.MemberErrorCode;
 import com.example.demo.domain.member.repository.MemberRepository;
+import com.example.demo.domain.notification.dto.req.NotificationReqDTO;
+import com.example.demo.domain.notification.enums.NotificationType;
+import com.example.demo.domain.notification.service.NotificationCommandService;
 import com.example.demo.domain.rent.converter.RentConverter;
 import com.example.demo.domain.rent.dto.req.RentReqDTO;
 import com.example.demo.domain.rent.dto.res.RentResDTO;
@@ -31,6 +34,8 @@ public class RentCommandServiceImpl implements RentCommandService {
     private final RentRepository rentRepository;
     private static final int RENT_PERIOD_DAYS = 14; // 대출 기간
 
+    private final NotificationCommandService notificationCommandService;
+
     @Override
     public RentResDTO.RentInfo rent(Long memberId, RentReqDTO.RentCreate dto) {
         Member member = memberRepository.findById(memberId)
@@ -51,6 +56,15 @@ public class RentCommandServiceImpl implements RentCommandService {
         Rent rent = RentConverter.toRent(member, book, rentedAt, dueAt);
         rentRepository.save(rent);
 
+        // 저장 성공 후 알림 발송
+        notificationCommandService.createNotification(member, NotificationReqDTO.CreateDTO.builder()
+                .memberId(member.getId())
+                .title("대여 성공")
+                .content("도서 " + book.getName() + " 대여가 완료되었습니다.")
+                .type(NotificationType.RENTAL_SUCCESS)
+                .build()
+        );
+
         return RentConverter.toRentInfo(rent);
     }
 
@@ -70,6 +84,15 @@ public class RentCommandServiceImpl implements RentCommandService {
         }
 
         rent.returnBook();
+
+        // 상태 변경 후 알림 발송
+        notificationCommandService.createNotification(rent.getMember(), NotificationReqDTO.CreateDTO.builder()
+                .memberId(rent.getMember().getId())
+                .title("반납 완료")
+                .content("도서 " + rent.getBook().getName() + " 반납이 완료되었습니다.")
+                .type(NotificationType.RENTAL_RETURNED)
+                .build()
+        );
 
         return RentConverter.toReturnInfo(rent);
     }

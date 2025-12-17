@@ -51,4 +51,9 @@ public class Notification extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "notification_type", nullable = false)
     private NotificationType notificationType;
+
+    // 알림 확인 처리
+    public void confirm() {
+        this.isConfirmed = true;
+    }
 }
