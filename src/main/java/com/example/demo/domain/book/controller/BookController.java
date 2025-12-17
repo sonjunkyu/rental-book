@@ -54,4 +54,10 @@ public class BookController {
 
         return ApiResponse.onSuccess(BookLikesSuccessCode.BOOK_UNLIKE_SUCCESS, bookCommandService.unlikeBook(bookId, memberId));
     }
+
+    // 도서 좋아요 갯수 조회
+    @GetMapping("/books/{bookId}/count-likes")
+    public ApiResponse<BookResDTO.BookLikeCountResult> getLikeCount(@PathVariable Long bookId) {
+        return ApiResponse.onSuccess(BookLikesSuccessCode.BOOK_LIKE_COUNT_GET_SUCCESS, bookQueryService.getLikeCount(bookId));
+    }
 }

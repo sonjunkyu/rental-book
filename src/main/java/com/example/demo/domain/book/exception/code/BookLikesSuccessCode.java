@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum BookLikesSuccessCode implements BaseSuccessCode {
     BOOK_LIKE_SUCCESS(HttpStatus.CREATED, "BOOK_201_2", "도서 좋아요 설정이 완료되었습니다."),
-    BOOK_UNLIKE_SUCCESS(HttpStatus.OK, "BOOK_200_4", "도서 좋아요 취소가 완료되었습니다.")
+    BOOK_UNLIKE_SUCCESS(HttpStatus.OK, "BOOK_200_4", "도서 좋아요 취소가 완료되었습니다."),
+    BOOK_LIKE_COUNT_GET_SUCCESS(HttpStatus.OK, "BOOK_200_5", "도서 좋아요 개수 조회가 완료되었습니다."),
     ;
 
     private final HttpStatus status;

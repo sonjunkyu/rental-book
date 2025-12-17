@@ -37,4 +37,11 @@ public class BookResDTO {
             String bookName,
             String message // "취소됨" 같은 상태 메시지 포함 가능
     ) {}
+
+    @Builder
+    public record BookLikeCountResult(
+            Long bookId,
+            String bookName,
+            Long likeCount
+    ) {}
 }

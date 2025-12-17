@@ -33,4 +33,13 @@ public class BookLikesConverter {
                 .message("좋아요가 취소되었습니다.")
                 .build();
     }
+
+    // Entity -> DTO
+    public static BookResDTO.BookLikeCountResult toBookLikeCountResult(Book book, Long count) {
+        return BookResDTO.BookLikeCountResult.builder()
+                .bookId(book.getId())
+                .bookName(book.getName())
+                .likeCount(count)
+                .build();
+    }
 }

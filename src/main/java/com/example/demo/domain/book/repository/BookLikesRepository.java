@@ -13,4 +13,7 @@ public interface BookLikesRepository extends JpaRepository<BookLikes, Long> {
 
     // 취소를 위해 좋아요 엔티티 조회
     Optional<BookLikes> findByBookAndMember(Book book, Member member);
+
+    // 특정 도서의 좋아요 갯수 카운트
+    Long countByBook(Book book);
 }
