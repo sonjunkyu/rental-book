@@ -3,7 +3,7 @@ package com.example.demo.domain.member.entity;
 import com.example.demo.domain.member.enums.Gender;
 import com.example.demo.domain.member.enums.Status;
 import com.example.demo.domain.notification.entity.Notification;
-import com.example.demo.domain.rent.entity.mapping.BookLikes;
+import com.example.demo.domain.book.entity.mapping.BookLikes;
 import com.example.demo.domain.rent.entity.mapping.Rent;
 import com.example.demo.global.auth.enums.Role;
 import com.example.demo.global.entity.BaseEntity;
