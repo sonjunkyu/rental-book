@@ -3,8 +3,9 @@ package com.example.demo.domain.member.entity;
 import com.example.demo.domain.member.enums.Gender;
 import com.example.demo.domain.member.enums.Status;
 import com.example.demo.domain.notification.entity.Notification;
-import com.example.demo.domain.rent.entity.mapping.BookLikes;
+import com.example.demo.domain.book.entity.mapping.BookLikes;
 import com.example.demo.domain.rent.entity.mapping.Rent;
+import com.example.demo.global.auth.enums.Role;
 import com.example.demo.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,6 +57,9 @@ public class Member extends BaseEntity {
     @Column(name = "status", nullable = false)
     @Builder.Default
     private Status status = Status.ACTIVE;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(name = "inactive_date")
     private LocalDateTime inactiveDate;

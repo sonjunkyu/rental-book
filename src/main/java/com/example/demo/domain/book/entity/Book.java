@@ -1,7 +1,7 @@
 package com.example.demo.domain.book.entity;
 
 import com.example.demo.domain.book.entity.mapping.BookHashTag;
-import com.example.demo.domain.rent.entity.mapping.BookLikes;
+import com.example.demo.domain.book.entity.mapping.BookLikes;
 import com.example.demo.domain.rent.entity.mapping.Rent;
 import com.example.demo.global.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
