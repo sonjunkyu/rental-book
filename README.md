@@ -6,18 +6,20 @@
 <img width="1762" height="586" alt="ERD" src="https://github.com/user-attachments/assets/507cf2ea-45ae-42e1-8d3d-0c7da56b9d25" />
 
 ## 주요 기능
-- 회원가입/로그인 (JWT 발급)
+- 회원가입/로그인 (JWT Access/Refresh Token 발급)
+- Access Token 만료 시 Refresh Token을 이용한 토큰 재발급
 - 도서 목록 조회 (페이지네이션)
 - 도서 좋아요 등록/취소, 좋아요 수 조회
 - 도서 대여/반납
 - 대여/반납 시 알림 생성 및 알림 확인 처리
 
 ## 동작 흐름(요약)
-1. 회원가입 → 로그인으로 `accessToken`을 발급받는다.
-2. 도서 목록을 조회하고 원하는 도서를 선택한다.
-3. 선택한 도서에 좋아요를 등록/취소하거나 좋아요 수를 확인한다.
-4. 도서를 대여하면 대여 정보가 생성되고, 반납 시 상태가 갱신된다.
-5. 대여/반납 이벤트에 대해 알림이 생성되며, 사용자는 알림을 확인 처리한다.
+1. 회원가입 → 로그인으로 `accessToken`과 `refreshToken`을 발급받는다.
+2. `accessToken`을 사용하여 서비스를 이용하다가 만료되면 `refreshToken`으로 재발급 요청을 한다.
+3. 도서 목록을 조회하고 원하는 도서를 선택한다.
+4. 선택한 도서에 좋아요를 등록/취소하거나 좋아요 수를 확인한다.
+5. 도서를 대여하면 대여 정보가 생성되고, 반납 시 상태가 갱신된다.
+6. 대여/반납 이벤트에 대해 알림이 생성되며, 사용자는 알림을 확인 처리한다.
 
 ## 기술 스택
 - Java 21, Spring Boot 3.5.8
@@ -33,9 +35,10 @@
 - `JWT_SECRET`
 
 ## 인증
-- 로그인 성공 시 `accessToken` 발급
-- 보호된 API 호출 시 `Authorization: Bearer {token}` 헤더 필요
-- 공개 API: `/sign-up`, `/login`, Swagger 관련 엔드포인트
+- 로그인 성공 시 `accessToken`과 `refreshToken` 발급
+- 보호된 API 호출 시 `Authorization: Bearer {accessToken}` 헤더 필요
+- `accessToken` 만료 시 `/reissue` API를 통해 토큰 재발급 (Header에 `RefreshToken` 포함 필요)
+- 공개 API: `/sign-up`, `/login`, `/reissue`, Swagger 관련 엔드포인트
 
 ## 응답 형식
 모든 API는 `ApiResponse`로 응답합니다.
@@ -57,6 +60,9 @@
 - `POST /login`
   - 요청: `{ "email": "...", "password": "..." }`
   - 응답: `{ "memberId": 1, "accessToken": "..." }`
+- `POST /reissue`
+  - 헤더: `RefreshToken: {refreshToken}`
+  - 응답: `{ "memberId": 1, "accessToken": "...", "refreshToken": "..." }`
 
 ### 도서
 - `GET /books?page=1`
