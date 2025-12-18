@@ -26,10 +26,11 @@ public class MemberConverter {
     }
 
     // Entity -> DTO
-    public static MemberResDTO.LoginDto toLoginDto(Member member, String accessToken) {
+    public static MemberResDTO.LoginDto toLoginDto(Member member, String accessToken, String refreshToken) {
         return MemberResDTO.LoginDto.builder()
                 .memberId(member.getId())
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 }

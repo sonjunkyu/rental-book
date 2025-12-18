@@ -14,6 +14,7 @@ public class MemberResDTO {
     @Builder
     public record LoginDto(
             Long memberId,
-            String accessToken
+            String accessToken,
+            String refreshToken
     ) {}
 }
