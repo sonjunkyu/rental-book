@@ -6,4 +6,6 @@ import jakarta.validation.Valid;
 
 public interface MemberQueryService {
     MemberResDTO.LoginDto login(MemberReqDTO.@Valid LoginDTO dto);
+
+    MemberResDTO.LoginDto reIssue(String refreshToken);
 }

@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -28,5 +29,11 @@ public class MemberController {
     @PostMapping("/login")
     public ApiResponse<MemberResDTO.LoginDto> login(@RequestBody @Valid MemberReqDTO.LoginDTO dto) {
         return ApiResponse.onSuccess(MemberSuccessCode.FOUND, memberQueryService.login(dto));
+    }
+
+    // 토큰 재발급
+    @PostMapping("/reissue")
+    public ApiResponse<MemberResDTO.LoginDto> reIssue(@RequestHeader("RefreshToken") String refreshToken) {
+        return ApiResponse.onSuccess(MemberSuccessCode.FOUND, memberQueryService.reIssue(refreshToken));
     }
 }
