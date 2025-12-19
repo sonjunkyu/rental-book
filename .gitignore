@@ -47,7 +47,6 @@ out/
 .vscode/
 
 ### Local configuration / secrets ###
-application.yml
 application-*.yml
 application.properties
 application-*.properties

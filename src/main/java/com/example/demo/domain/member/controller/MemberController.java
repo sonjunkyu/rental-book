@@ -6,18 +6,17 @@ import com.example.demo.domain.member.exception.code.MemberSuccessCode;
 import com.example.demo.domain.member.service.MemberCommandService;
 import com.example.demo.domain.member.service.MemberQueryService;
 import com.example.demo.global.apiPayload.ApiResponse;
+import com.example.demo.global.auth.service.KakaoAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
+    private final KakaoAuthService kakaoAuthService;
 
     // 회원가입
     @PostMapping("/sign-up")
@@ -35,5 +34,11 @@ public class MemberController {
     @PostMapping("/reissue")
     public ApiResponse<MemberResDTO.LoginDto> reIssue(@RequestHeader("RefreshToken") String refreshToken) {
         return ApiResponse.onSuccess(MemberSuccessCode.FOUND, memberQueryService.reIssue(refreshToken));
+    }
+
+    // 카카오 로그인
+    @GetMapping("/login/oauth2/code/kakao")
+    public ApiResponse<MemberResDTO.LoginDto> kakaoLogin(@RequestParam("code") String code) {
+        return ApiResponse.onSuccess(MemberSuccessCode.FOUND, kakaoAuthService.kakaoLogin(code));
     }
 }
