@@ -1,6 +1,7 @@
 package com.example.demo.domain.member.entity;
 
 import com.example.demo.domain.member.enums.Gender;
+import com.example.demo.domain.member.enums.SocialType;
 import com.example.demo.domain.member.enums.Status;
 import com.example.demo.domain.notification.entity.Notification;
 import com.example.demo.domain.book.entity.mapping.BookLikes;
@@ -39,7 +40,7 @@ public class Member extends BaseEntity {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(name = "email", nullable = false, length = 20)
+    @Column(name = "email", nullable = false, length = 50)
     private String email;
 
     @Column(name = "password", nullable = false, length = 60)
@@ -60,6 +61,12 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+
+    @Column(name = "social_id")
+    private String socialId;
 
     @Column(name = "inactive_date")
     private LocalDateTime inactiveDate;
