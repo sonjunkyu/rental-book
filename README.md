@@ -31,12 +31,6 @@
 - MySQL
 - Swagger(OpenAPI)
 
-## 환경 변수
-- `DB_URL`
-- `DB_USER`
-- `DB_PW`
-- `JWT_SECRET`
-
 ## 인증
 - 로그인 성공 시 `accessToken`과 `refreshToken` 발급
 - 보호된 API 호출 시 `Authorization: Bearer {accessToken}` 헤더 필요
