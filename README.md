@@ -3,10 +3,13 @@
 간단한 도서 대여/좋아요/알림을 제공하는 Spring Boot API 프로젝트입니다.
 
 ## ERD
-<img width="1762" height="586" alt="ERD" src="https://github.com/user-attachments/assets/507cf2ea-45ae-42e1-8d3d-0c7da56b9d25" />
+<img width="1764" height="576" alt="ERD" src="https://github.com/user-attachments/assets/762be4da-e26e-4321-b77e-4d7b16bdd368" />
 
 ## 주요 기능
-- 회원가입/로그인 (JWT Access/Refresh Token 발급)
+- 회원가입/로그인
+  - 일반 회원가입 및 로그인
+  - 카카오 소셜 로그인
+  - JWT Access/Refresh Token 발급
 - Access Token 만료 시 Refresh Token을 이용한 토큰 재발급
 - 도서 목록 조회 (페이지네이션)
 - 도서 좋아요 등록/취소, 좋아요 수 조회
@@ -14,7 +17,7 @@
 - 대여/반납 시 알림 생성 및 알림 확인 처리
 
 ## 동작 흐름(요약)
-1. 회원가입 → 로그인으로 `accessToken`과 `refreshToken`을 발급받는다.
+1. 회원가입 → 로그인, 카카오 계정으로 로그인하여 `accessToken`과 `refreshToken`을 발급받는다.
 2. `accessToken`을 사용하여 서비스를 이용하다가 만료되면 `refreshToken`으로 재발급 요청을 한다.
 3. 도서 목록을 조회하고 원하는 도서를 선택한다.
 4. 선택한 도서에 좋아요를 등록/취소하거나 좋아요 수를 확인한다.
@@ -23,7 +26,7 @@
 
 ## 기술 스택
 - Java 21, Spring Boot 3.5.8
-- Spring Web, Spring Data JPA, Spring Security
+- Spring Web, Spring Data JPA, Spring Security, Spring Security OAuth2 Client
 - JWT
 - MySQL
 - Swagger(OpenAPI)
@@ -38,7 +41,7 @@
 - 로그인 성공 시 `accessToken`과 `refreshToken` 발급
 - 보호된 API 호출 시 `Authorization: Bearer {accessToken}` 헤더 필요
 - `accessToken` 만료 시 `/reissue` API를 통해 토큰 재발급 (Header에 `RefreshToken` 포함 필요)
-- 공개 API: `/sign-up`, `/login`, `/reissue`, Swagger 관련 엔드포인트
+- 공개 API: `/sign-up`, `/login`, `/reissue`, `/login/oauth2/code/kakao`, Swagger 관련 엔드포인트
 
 ## 응답 형식
 모든 API는 `ApiResponse`로 응답합니다.
@@ -62,6 +65,9 @@
   - 응답: `{ "memberId": 1, "accessToken": "..." }`
 - `POST /reissue`
   - 헤더: `RefreshToken: {refreshToken}`
+  - 응답: `{ "memberId": 1, "accessToken": "...", "refreshToken": "..." }`
+- `GET /login/oauth2/code/kakao`
+  - 요청: `?code={authorization_code}`
   - 응답: `{ "memberId": 1, "accessToken": "...", "refreshToken": "..." }`
 
 ### 도서
