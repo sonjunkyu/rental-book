@@ -6,9 +6,12 @@ import com.example.demo.domain.member.exception.code.MemberSuccessCode;
 import com.example.demo.domain.member.service.MemberCommandService;
 import com.example.demo.domain.member.service.MemberQueryService;
 import com.example.demo.global.apiPayload.ApiResponse;
+import com.example.demo.global.apiPayload.code.GeneralSuccessCode;
+import com.example.demo.global.auth.CustomUserDetails;
 import com.example.demo.global.auth.service.KakaoAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,6 +31,14 @@ public class MemberController {
     @PostMapping("/login")
     public ApiResponse<MemberResDTO.LoginDto> login(@RequestBody @Valid MemberReqDTO.LoginDTO dto) {
         return ApiResponse.onSuccess(MemberSuccessCode.FOUND, memberQueryService.login(dto));
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ApiResponse<String> logout(@RequestHeader("Authorization") String accessToken, @AuthenticationPrincipal CustomUserDetails principal) {
+        // Bearer 제거
+        String token = accessToken.replace("Bearer ", "");
+        return ApiResponse.onSuccess(GeneralSuccessCode.OK, memberCommandService.logout(token, principal.getUsername()));
     }
 
     // 토큰 재발급
