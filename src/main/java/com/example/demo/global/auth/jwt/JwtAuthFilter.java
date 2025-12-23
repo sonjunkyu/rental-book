@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
+    private final StringRedisTemplate redisTemplate;
 
     @Override
     protected void doFilterInternal(
@@ -37,6 +39,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         // Bearer이면 추출
         token = token.replace("Bearer ", "");
+
+        // Redis에 blacklist:토큰 키가 존재하면 로그아웃된 토큰으로 간주
+        if (redisTemplate.hasKey("blacklist:" + token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // AccessToken 검증하기: 올바른 토큰이면
         if (jwtUtil.isValid(token)) {
             // 토큰에서 이메일 추출

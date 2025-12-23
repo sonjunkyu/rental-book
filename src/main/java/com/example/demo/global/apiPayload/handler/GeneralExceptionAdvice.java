@@ -6,9 +6,13 @@ import com.example.demo.global.apiPayload.code.GeneralErrorCode;
 import com.example.demo.global.apiPayload.exception.GeneralException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -51,5 +55,31 @@ public class GeneralExceptionAdvice {
         ApiResponse<Map<String, String>> errorResponse = ApiResponse.onFailure(code, errors);
 
         return ResponseEntity.status(code.getStatus()).body(errorResponse);
+    }
+
+    // DTO 검증 실패 처리 @RequestBody @Valid 실패 시
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException ex) {
+
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors()
+                .forEach(c -> errors.put(((FieldError) c).getField(), c.getDefaultMessage()));
+
+        BaseErrorCode code = GeneralErrorCode.VALID_FAIL;
+
+        return ResponseEntity.status(code.getStatus())
+                .body(ApiResponse.onFailure(code, errors));
+    }
+
+    // 지원하지 않는 HTTP 메소드 요청 시 (예: POST인데 GET 요청)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<String>> handleHttpRequestMethodNotSupportedException(
+            HttpRequestMethodNotSupportedException ex) {
+
+        BaseErrorCode code = GeneralErrorCode.METHOD_NOT_ALLOWED;
+
+        return ResponseEntity.status(code.getStatus())
+                .body(ApiResponse.onFailure(code, ex.getMessage()));
     }
 }

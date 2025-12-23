@@ -70,6 +70,13 @@ public class JwtUtil {
         }
     }
 
+    // 토큰의 남은 유효 시간 반환
+    public Long getExpiration(String token) {
+        Date expiration = getClaims(token).getPayload().getExpiration();
+        long now = new Date().getTime();
+        return expiration.getTime() - now;
+    }
+
     // 토큰 생성
     private String createToken(CustomUserDetails user, Duration expiration) {
         Instant now = Instant.now();

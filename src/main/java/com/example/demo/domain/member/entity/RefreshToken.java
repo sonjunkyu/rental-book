@@ -2,21 +2,22 @@ package com.example.demo.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
-@Entity
+@RedisHash(value = "refreshToken", timeToLive = 1209600)
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RefreshToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false)
+    @Indexed
     private String token;
 
-    @Column(nullable = false)
+    @Indexed
     private String email;
 
     // 토큰 교체
