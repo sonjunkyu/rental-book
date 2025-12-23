@@ -22,6 +22,9 @@ public enum GeneralErrorCode implements BaseErrorCode {
     VALID_FAIL(HttpStatus.BAD_REQUEST,
             "VALID400_1",
             "검증에 실패했습니다."),
+    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED,
+            "COMMON405_1",
+            "지원하지 않는 HTTP 메소드입니다.");
     ;
 
     private final HttpStatus status;
