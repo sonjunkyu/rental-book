@@ -28,9 +28,10 @@ public class BookController {
     // 도서 목록 조회
     @GetMapping("/books")
     public ApiResponse<BookResDTO.BookPreViewListDTO> getBookList(
-            @ValidPage @RequestParam(defaultValue = "1") Integer page
+            @ValidPage @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(required = false) String keyword
     ) {
-        return ApiResponse.onSuccess(BookSuccessCode.BOOK_LIST_GET_SUCCESS,bookQueryService.getBookList(page));
+        return ApiResponse.onSuccess(BookSuccessCode.BOOK_LIST_GET_SUCCESS,bookQueryService.getBookList(page, keyword));
     }
 
     // 도서 대출

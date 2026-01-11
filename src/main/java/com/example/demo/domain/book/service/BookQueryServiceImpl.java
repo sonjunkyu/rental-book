@@ -4,10 +4,13 @@ import com.example.demo.domain.book.converter.BookConverter;
 import com.example.demo.domain.book.converter.BookLikesConverter;
 import com.example.demo.domain.book.dto.res.BookResDTO;
 import com.example.demo.domain.book.entity.Book;
+import com.example.demo.domain.book.entity.QBook;
 import com.example.demo.domain.book.exception.BookException;
 import com.example.demo.domain.book.exception.code.BookErrorCode;
 import com.example.demo.domain.book.repository.BookLikesRepository;
 import com.example.demo.domain.book.repository.BookRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,11 +28,13 @@ public class BookQueryServiceImpl implements BookQueryService {
 
     // 도서 목록 조회
     @Override
-    public BookResDTO.BookPreViewListDTO getBookList(Integer page) {
+    public BookResDTO.BookPreViewListDTO getBookList(Integer page, String keyword) {
         int pageIndex = (page == null ? 1 : page) - 1;  // page는 1부터 받고, 내부에선 0-based로 변환 (page - 1)
         PageRequest pageRequest = PageRequest.of(pageIndex, DEFAULT_PAGE_SIZE);
 
-        Page<Book> result = bookRepository.findAll(pageRequest);
+        Predicate predicate = buildSearchPredicate(keyword);
+
+        Page<Book> result = bookRepository.findAll(predicate, pageRequest);
 
         if (result.isEmpty()) {
             throw new BookException(BookErrorCode.BOOK_NOT_FOUND);
@@ -48,5 +53,17 @@ public class BookQueryServiceImpl implements BookQueryService {
         Long count = bookLikesRepository.countByBook(book);
 
         return BookLikesConverter.toBookLikeCountResult(book, count);
+    }
+
+    private Predicate buildSearchPredicate(String keyword) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QBook book = QBook.book;
+
+        if (keyword != null && !keyword.isBlank()) {
+            // (이름 포함 OR 설명 포함) 조건 생성
+            builder.and(book.name.contains(keyword).or(book.description.contains(keyword)));
+        }
+
+        return builder;
     }
 }
