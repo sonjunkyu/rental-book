@@ -19,6 +19,7 @@ import com.example.demo.domain.rent.enums.Status;
 import com.example.demo.domain.rent.exception.RentException;
 import com.example.demo.domain.rent.exception.code.RentErrorCode;
 import com.example.demo.domain.rent.repository.RentRepository;
+import com.example.demo.global.annotation.DistributedLock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,7 @@ public class RentCommandServiceImpl implements RentCommandService {
     private final NotificationCommandService notificationCommandService;
 
     @Override
+    @DistributedLock(key = "'rent:book:'.concat(#dto.bookId)")
     public RentResDTO.RentInfo rent(Long memberId, RentReqDTO.RentCreate dto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
